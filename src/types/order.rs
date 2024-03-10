@@ -1,4 +1,4 @@
 pub enum Order {
     ASC,
-    DESC
+    DESC,
 }

@@ -1,4 +1,4 @@
 pub enum OrderField {
     CreateAt,
-    UpdateAt
+    UpdateAt,
 }

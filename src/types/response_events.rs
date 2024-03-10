@@ -3,5 +3,5 @@ pub enum ResponseEvents {
     GamePaused,
     RoundFinished,
     NextRound,
-    GameFinished
+    GameFinished,
 }
