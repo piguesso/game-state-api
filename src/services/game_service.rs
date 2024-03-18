@@ -9,8 +9,8 @@ pub trait IGameService: Send {
     fn fetch_entry(&mut self, primary_key: i32) -> Result<Game, CustomError>;
 }
 
-pub fn new_game_service(game_repo: Box<dyn IGameRepository<i32>>) -> Box<dyn IGameService> {
-    Box::new(GameService { game_repo })
+pub fn new_game_service(game_repo: Box<dyn IGameRepository<i32>>) -> impl IGameService {
+    GameService { game_repo }
 }
 
 pub struct GameService {

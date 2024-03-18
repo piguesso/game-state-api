@@ -37,7 +37,7 @@ fn rocket() -> _ {
     let secret_provider = SecretProvider::new(".env");
     let connection_manager = new_connection_manager(secret_provider.borrow());
 
-    let game_repository = new_game_repository(connection_manager.get().unwrap());
+    //let game_repository = new_game_repository(connection_manager.get().unwrap());
     let player_scoring_repository =
         new_player_scoring_repository(connection_manager.get().unwrap());
     let player_repository = new_player_repository(connection_manager.get().unwrap());
@@ -45,11 +45,10 @@ fn rocket() -> _ {
         new_player_round_scoring_repository(connection_manager.get().unwrap());
     let round_repository = new_round_repository(connection_manager.get().unwrap());
 
-    let game_service = new_game_service(Box::new(game_repository));
+    //let game_service = new_game_service(Box::new(game_repository));
 
     rocket::build()
         .manage(secret_provider)
-        .manage(Mutex::new(game_service))
         .manage(Mutex::new(player_scoring_repository))
         .manage(Mutex::new(player_repository))
         .manage(Mutex::new(player_round_scoring_repository))
