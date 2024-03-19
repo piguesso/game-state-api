@@ -1,47 +1,40 @@
 use diesel::{data_types::PgTimestamp, prelude::*};
 
-#[derive(Queryable)]
-#[diesel(table_name = crate::database::schema::games)]
+#[derive(Queryable, Selectable)]
+#[diesel(table_name = crate::schema::games)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Game {
     pub id: i32,
-    pub status: String,
+    pub status: Option<String>,
     pub winner_id: Option<String>,
+    pub game_slug: String,
     pub created_at: PgTimestamp,
     pub updated_at: PgTimestamp,
 }
 
-#[derive(Insertable)]
-#[diesel(table_name = crate::database::schema::games)]
-#[diesel(check_for_backend(diesel::pg::Pg))]
-pub struct NewGame {
-    pub status: String,
-    pub winner_id: Option<String>,
-}
-
 #[derive(AsChangeset)]
-#[diesel(table_name = crate::database::schema::games)]
+#[diesel(table_name = crate::schema::games)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct UpdateGame {
     pub status: String,
     pub winner_id: Option<String>,
 }
 
-#[derive(Queryable)]
-#[diesel(table_name = crate::database::schema::players)]
+#[derive(Queryable, Selectable)]
+#[diesel(table_name = crate::schema::players)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 #[diesel(primary_key(player_id, game_id))]
 pub struct Player {
     pub player_id: String,
     pub game_id: i32,
-    pub is_host: bool,
+    pub is_host: Option<bool>,
     pub left_game_at: Option<PgTimestamp>,
     pub created_at: PgTimestamp,
     pub updated_at: PgTimestamp,
 }
 
 #[derive(Insertable)]
-#[diesel(table_name = crate::database::schema::players)]
+#[diesel(table_name = crate::schema::players)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct NewPlayer {
     pub player_id: String,
@@ -50,7 +43,7 @@ pub struct NewPlayer {
 }
 
 #[derive(AsChangeset)]
-#[diesel(table_name = crate::database::schema::players)]
+#[diesel(table_name = crate::schema::players)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 #[diesel(primary_key(player_id, game_id))]
 pub struct UpdatePlayer {
@@ -61,7 +54,7 @@ pub struct UpdatePlayer {
 }
 
 #[derive(Queryable)]
-#[diesel(table_name = crate::database::schema::player_scoring)]
+#[diesel(table_name = crate::schema::player_scoring)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 #[diesel(primary_key(player_id))]
 pub struct PlayerScoring {
@@ -79,7 +72,7 @@ pub struct PlayerScoring {
 }
 
 #[derive(AsChangeset)]
-#[diesel(table_name = crate::database::schema::player_scoring)]
+#[diesel(table_name = crate::schema::player_scoring)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 #[diesel(primary_key(player_id))]
 pub struct UpdatePlayerScoring {
@@ -94,8 +87,8 @@ pub struct UpdatePlayerScoring {
     pub games_bottom3: Option<i32>,
 }
 
-#[derive(Queryable, Selectable, Insertable, AsChangeset)]
-#[diesel(table_name = crate::database::schema::rounds)]
+#[derive(Queryable, Selectable)]
+#[diesel(table_name = crate::schema::rounds)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Round {
     pub id: i32,
@@ -107,7 +100,7 @@ pub struct Round {
 }
 
 #[derive(Insertable)]
-#[diesel(table_name = crate::database::schema::rounds)]
+#[diesel(table_name = crate::schema::rounds)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct NewRound {
     pub game_id: i32,
@@ -118,7 +111,7 @@ pub struct NewRound {
 }
 
 #[derive(AsChangeset)]
-#[diesel(table_name = crate::database::schema::rounds)]
+#[diesel(table_name = crate::schema::rounds)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct UpdateRound {
     pub id: i32,
@@ -130,7 +123,7 @@ pub struct UpdateRound {
 }
 
 #[derive(Insertable)]
-#[diesel(table_name = crate::database::schema::player_scoring_round)]
+#[diesel(table_name = crate::schema::player_scoring_round)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct NewPlayerScoringRound {
     pub player_id: String,
@@ -139,7 +132,7 @@ pub struct NewPlayerScoringRound {
 }
 
 #[derive(AsChangeset)]
-#[diesel(table_name = crate::database::schema::player_scoring_round)]
+#[diesel(table_name = crate::schema::player_scoring_round)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct UpdatePlayerScoringRound {
     pub player_id: String,
@@ -148,28 +141,28 @@ pub struct UpdatePlayerScoringRound {
     pub score: Option<i32>,
     pub place: Option<i32>,
     pub is_winner: Option<bool>,
-    pub time_used_to_complete: Option<i64>,
+    pub time_used_to_complete: Option<i32>,
     pub first_topic: Option<String>,
     pub second_topic: Option<String>,
     pub third_topic: Option<String>,
     pub has_stopped_game: Option<bool>,
 }
 
-#[derive(Queryable)]
-#[diesel(table_name = crate::database::schema::player_scoring_round)]
+#[derive(Queryable, Selectable)]
+#[diesel(table_name = crate::schema::player_scoring_round)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct PlayerScoringRound {
     pub player_id: String,
     pub game_id: i32,
     pub round_id: i32,
-    pub score: i32,
-    pub place: i32,
-    pub is_winner: bool,
-    pub time_used_to_complete: i64,
-    pub first_topic: String,
-    pub second_topic: String,
-    pub third_topic: String,
-    pub has_stopped_game: bool,
+    pub score: Option<i32>,
+    pub place: Option<i32>,
+    pub is_winner: Option<bool>,
+    pub time_used_to_complete: Option<i32>,
+    pub first_topic: Option<String>,
+    pub second_topic: Option<String>,
+    pub third_topic: Option<String>,
+    pub has_stopped_game: Option<bool>,
     pub created_at: PgTimestamp,
     pub updated_at: PgTimestamp,
 }
