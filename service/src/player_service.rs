@@ -10,6 +10,7 @@ use infrastructure::{
 use redis::Commands;
 use rocket::http::Status;
 use shared::error::Error;
+use shared::game_status::GameStatus;
 use shared::response::{GamePlayerStats, PlayerRoundStats};
 
 pub fn get_players_in_game(game_id: i32) -> Result<Vec<Player>, Error> {
@@ -79,7 +80,22 @@ pub fn join_game(game_id: i32, player_id: String) -> Result<(), Error> {
         .first::<Game>(&mut conn);
     match game {
         Ok(game) => {
-            if game.status == Some(String::from("waiting")) {
+            let players_amount: i64 = match players::table
+                .count()
+                .filter(players::game_id.eq(game_id))
+                .first::<i64>(&mut conn)
+            {
+                Ok(players_amount) => players_amount,
+                Err(_) => {
+                    return Err(Error::new(
+                        String::from("Internal server error"),
+                        Status::InternalServerError,
+                    ))
+                }
+            };
+            if game.status == Some(GameStatus::to_string(GameStatus::WAITING))
+                && (game.max_players as i64) > players_amount
+            {
                 let mut redis_conn = establish_redis_connection();
                 match redis_conn
                     .sadd::<String, String, bool>(format!("game:{}:players", game_id), player_id)

@@ -10,6 +10,8 @@ pub struct Game {
     pub status: Option<String>,
     pub winner_id: Option<String>,
     pub game_slug: String,
+    pub max_players: i32,
+    pub rounds: i32,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
 }
@@ -98,7 +100,7 @@ pub struct Round {
     pub round_number: i32,
     pub topic: String,
     pub start_time: NaiveDateTime,
-    pub end_time: NaiveDateTime,
+    pub end_time: Option<NaiveDateTime>,
 }
 
 #[derive(Insertable, Serialize, Deserialize)]
@@ -109,18 +111,12 @@ pub struct NewRound {
     pub round_number: i32,
     pub topic: String,
     pub start_time: NaiveDateTime,
-    pub end_time: NaiveDateTime,
 }
 
 #[derive(AsChangeset, Serialize, Deserialize)]
 #[diesel(table_name = crate::schema::rounds)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct UpdateRound {
-    pub id: i32,
-    pub game_id: Option<i32>,
-    pub round_number: Option<i32>,
-    pub topic: Option<String>,
-    pub start_time: Option<NaiveDateTime>,
     pub end_time: Option<NaiveDateTime>,
 }
 
@@ -143,7 +139,7 @@ pub struct UpdatePlayerScoringRound {
     pub score: Option<i32>,
     pub place: Option<i32>,
     pub is_winner: Option<bool>,
-    pub time_used_to_complete: Option<i32>,
+    pub time_used_to_complete: Option<i64>,
     pub first_topic: Option<String>,
     pub second_topic: Option<String>,
     pub third_topic: Option<String>,
@@ -160,7 +156,7 @@ pub struct PlayerScoringRound {
     pub score: Option<i32>,
     pub place: Option<i32>,
     pub is_winner: Option<bool>,
-    pub time_used_to_complete: Option<i32>,
+    pub time_used_to_complete: Option<i64>,
     pub first_topic: Option<String>,
     pub second_topic: Option<String>,
     pub third_topic: Option<String>,

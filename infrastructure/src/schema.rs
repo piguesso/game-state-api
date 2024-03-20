@@ -30,6 +30,8 @@ diesel::table! {
         id -> Integer,
         status -> Nullable<Varchar>,
         game_slug -> Varchar,
+        max_players -> Integer,
+        rounds -> Integer,
         winner_id -> Nullable<Varchar>,
         created_at -> Timestamp,
         updated_at -> Timestamp,
@@ -62,7 +64,7 @@ diesel::table! {
         round_id -> Integer,
         place -> Nullable<Integer>,
         is_winner -> Nullable<Bool>,
-        time_used_to_complete -> Nullable<Integer>,
+        time_used_to_complete -> Nullable<BigInt>,
         #[max_length = 100]
         first_topic -> Nullable<Varchar>,
         #[max_length = 100]
@@ -95,7 +97,7 @@ diesel::table! {
         #[max_length = 100]
         topic -> Varchar,
         start_time -> Timestamp,
-        end_time -> Timestamp,
+        end_time -> Nullable<Timestamp>,
     }
 }
 

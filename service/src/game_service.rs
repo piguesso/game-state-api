@@ -1,4 +1,5 @@
 use diesel::prelude::*;
+use diesel::result::Error as DieselError;
 use infrastructure::{
     establish_connection, establish_redis_connection,
     models::{Game, UpdateGame},
@@ -12,7 +13,7 @@ pub fn get_game(id: Option<i32>, slug: Option<String>) -> Result<Game, Error> {
     let mut conn = establish_connection();
     match id {
         Some(id) => {
-            let game = games::table
+            let game: Result<Game, DieselError> = games::table
                 .select(Game::as_select())
                 .find(id)
                 .first::<Game>(&mut conn);
@@ -29,7 +30,7 @@ pub fn get_game(id: Option<i32>, slug: Option<String>) -> Result<Game, Error> {
         }
         None => match slug {
             Some(slug) => {
-                let game = games::table
+                let game: Result<Game, DieselError> = games::table
                     .select(Game::as_select())
                     .filter(games::game_slug.eq(slug))
                     .first::<Game>(&mut conn);
@@ -52,89 +53,31 @@ pub fn get_game(id: Option<i32>, slug: Option<String>) -> Result<Game, Error> {
     }
 }
 
-pub fn finish_game(id: i32, winner_id: String) -> Result<(), Error> {
+pub fn finish_game(id: i32) -> Result<(), Error> {
     let mut conn = establish_connection();
-    let game = games::table
+    let game: Result<Game, DieselError> = games::table
         .select(Game::as_select())
         .find(id)
         .first::<Game>(&mut conn);
     match game {
-        Ok(_) => {
-            let updated_game = UpdateGame {
-                status: GameStatus::to_string(GameStatus::FINISHED),
-                winner_id: Some(winner_id),
-            };
-            let result = diesel::update(games::table.find(id))
-                .set(updated_game)
-                .execute(&mut conn);
-            match result {
-                Ok(_) => Ok(()),
-                Err(_) => Err(Error::new(
-                    String::from("Internal server error"),
-                    Status::InternalServerError,
-                )),
-            }
-        }
-        Err(diesel::NotFound) => Err(Error::new(String::from("Game not found"), Status::NotFound)),
-        Err(_) => Err(Error::new(
-            String::from("Internal server error"),
-            Status::InternalServerError,
-        )),
-    }
-}
-
-pub fn end_game(id: i32) -> Result<(), Error> {
-    let mut conn = establish_connection();
-    let game = games::table
-        .select(Game::as_select())
-        .find(id)
-        .first::<Game>(&mut conn);
-    match game {
-        Ok(_) => {
-            let updated_game = UpdateGame {
-                status: GameStatus::to_string(GameStatus::FINISHED),
-                winner_id: None,
-            };
-            let result = diesel::update(games::table.find(id))
-                .set(updated_game)
-                .execute(&mut conn);
-            match result {
-                Ok(_) => Ok(()),
-                Err(_) => Err(Error::new(
-                    String::from("Internal server error"),
-                    Status::InternalServerError,
-                )),
-            }
-        }
-        Err(diesel::NotFound) => Err(Error::new(String::from("Game not found"), Status::NotFound)),
-        Err(_) => Err(Error::new(
-            String::from("Internal server error"),
-            Status::InternalServerError,
-        )),
-    }
-}
-
-pub fn change_game_status(id: i32, status: GameStatus) -> Result<(), Error> {
-    let mut conn = establish_connection();
-    let game = games::table
-        .select(Game::as_select())
-        .find(id)
-        .first::<Game>(&mut conn);
-    match game {
-        Ok(_) => {
-            let updated_game = UpdateGame {
-                status: GameStatus::to_string(status),
-                winner_id: None,
-            };
-            let result = diesel::update(games::table.find(id))
-                .set(updated_game)
-                .execute(&mut conn);
-            match result {
-                Ok(_) => Ok(()),
-                Err(_) => Err(Error::new(
-                    String::from("Internal server error"),
-                    Status::InternalServerError,
-                )),
+        Ok(game) => {
+            if game.status == Some(GameStatus::to_string(GameStatus::FINISHED)) {
+                Ok(())
+            } else {
+                let updated_game = UpdateGame {
+                    status: GameStatus::to_string(GameStatus::FINISHED),
+                    winner_id: None,
+                };
+                let result = diesel::update(games::table.find(id))
+                    .set(updated_game)
+                    .execute(&mut conn);
+                match result {
+                    Ok(_) => Ok(()),
+                    Err(_) => Err(Error::new(
+                        String::from("Internal server error"),
+                        Status::InternalServerError,
+                    )),
+                }
             }
         }
         Err(diesel::NotFound) => Err(Error::new(String::from("Game not found"), Status::NotFound)),
@@ -175,8 +118,8 @@ pub fn get_active_games(options: Option<RequestOptions>) -> Result<Vec<Game>, Er
         }
         let game = games::table
             .select(Game::as_select())
-            .filter(games::status.eq("waiting"))
-            .or_filter(games::status.eq("playing"))
+            .filter(games::status.eq(GameStatus::to_string(GameStatus::WAITING)))
+            .or_filter(games::status.eq(GameStatus::to_string(GameStatus::PLAYING)))
             .find(game_id)
             .first::<Game>(&mut conn);
         match game {

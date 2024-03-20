@@ -28,7 +28,7 @@ pub struct PlayerRoundStats {
     pub score: i32,
     pub place: i32,
     pub is_winner: bool,
-    pub time_used_to_complete: i32,
+    pub time_used_to_complete: i64,
     pub first_topic: String,
     pub second_topic: String,
     pub third_topic: String,
