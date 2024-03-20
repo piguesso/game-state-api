@@ -1,5 +1,6 @@
 pub mod error;
 pub mod game_status;
+pub mod response;
 
 pub struct RequestOptions {
     pub limit: i32,

@@ -13,4 +13,12 @@ impl GameStatus {
             _ => GameStatus::WAITING,
         }
     }
+
+    pub fn to_string(status: GameStatus) -> String {
+        match status {
+            GameStatus::WAITING => "waiting".to_string(),
+            GameStatus::PLAYING => "playing".to_string(),
+            GameStatus::FINISHED => "finished".to_string(),
+        }
+    }
 }

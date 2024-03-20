@@ -6,6 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+chrono = "0.4.35"
 diesel = { version = "2.1.5", features = ["postgres"] }
 infrastructure = { path = "../infrastructure" }
+redis = "0.25.2"
+rocket = "0.5.0"
 shared = { path = "../shared" }

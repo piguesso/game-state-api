@@ -2,11 +2,11 @@
 
 diesel::table! {
     demo (id) {
-        id -> Int4,
+        id -> Integer,
         clerk_id -> Varchar,
         drawing -> Nullable<Jsonb>,
-        term -> Nullable<Int4>,
-        guess -> Nullable<Int4>,
+        term -> Nullable<Integer>,
+        guess -> Nullable<Integer>,
         term_confidence -> Nullable<Numeric>,
         host -> Bool,
         image_url -> Nullable<Text>,
@@ -18,7 +18,7 @@ diesel::table! {
 
 diesel::table! {
     friends (id) {
-        id -> Int4,
+        id -> Integer,
         user_id -> Varchar,
         friend_id -> Varchar,
         created_at -> Varchar,
@@ -27,7 +27,7 @@ diesel::table! {
 
 diesel::table! {
     games (id) {
-        id -> Int4,
+        id -> Integer,
         status -> Nullable<Varchar>,
         game_slug -> Varchar,
         winner_id -> Nullable<Varchar>,
@@ -38,16 +38,16 @@ diesel::table! {
 
 diesel::table! {
     player_scoring (id) {
-        id -> Int4,
+        id -> Integer,
         player_id -> Varchar,
-        total_xp -> Nullable<Int4>,
-        highest_score_game -> Nullable<Int4>,
-        highest_score_round -> Nullable<Int4>,
-        games_played -> Nullable<Int4>,
-        games_won -> Nullable<Int4>,
-        games_lost -> Nullable<Int4>,
-        games_top3 -> Nullable<Int4>,
-        games_bottom3 -> Nullable<Int4>,
+        total_xp -> Nullable<Integer>,
+        highest_score_game -> Nullable<Integer>,
+        highest_score_round -> Nullable<Integer>,
+        games_played -> Nullable<Integer>,
+        games_won -> Nullable<Integer>,
+        games_lost -> Nullable<Integer>,
+        games_top3 -> Nullable<Integer>,
+        games_bottom3 -> Nullable<Integer>,
         created_at -> Timestamp,
         updated_at -> Timestamp,
     }
@@ -55,14 +55,14 @@ diesel::table! {
 
 diesel::table! {
     player_scoring_round (id) {
-        id -> Int4,
+        id -> Integer,
         player_id -> Varchar,
-        game_id -> Int4,
-        score -> Nullable<Int4>,
-        round_id -> Int4,
-        place -> Nullable<Int4>,
+        game_id -> Integer,
+        score -> Nullable<Integer>,
+        round_id -> Integer,
+        place -> Nullable<Integer>,
         is_winner -> Nullable<Bool>,
-        time_used_to_complete -> Nullable<Int4>,
+        time_used_to_complete -> Nullable<Integer>,
         #[max_length = 100]
         first_topic -> Nullable<Varchar>,
         #[max_length = 100]
@@ -77,9 +77,9 @@ diesel::table! {
 
 diesel::table! {
     players (id) {
-        id -> Int4,
+        id -> Integer,
         player_id -> Varchar,
-        game_id -> Int4,
+        game_id -> Integer,
         is_host -> Nullable<Bool>,
         left_game_at -> Nullable<Timestamp>,
         created_at -> Timestamp,
@@ -89,9 +89,9 @@ diesel::table! {
 
 diesel::table! {
     rounds (id) {
-        id -> Int4,
-        game_id -> Int4,
-        round_number -> Int4,
+        id -> Integer,
+        game_id -> Integer,
+        round_number -> Integer,
         #[max_length = 100]
         topic -> Varchar,
         start_time -> Timestamp,

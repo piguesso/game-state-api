@@ -1,6 +1,8 @@
-use diesel::{data_types::PgTimestamp, prelude::*};
+use diesel::prelude::*;
+use chrono::NaiveDateTime;
+use serde::{Deserialize, Serialize};
 
-#[derive(Queryable, Selectable)]
+#[derive(Queryable, Selectable, Serialize, Deserialize)]
 #[diesel(table_name = crate::schema::games)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Game {
@@ -8,11 +10,11 @@ pub struct Game {
     pub status: Option<String>,
     pub winner_id: Option<String>,
     pub game_slug: String,
-    pub created_at: PgTimestamp,
-    pub updated_at: PgTimestamp,
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime,
 }
 
-#[derive(AsChangeset)]
+#[derive(AsChangeset, Serialize, Deserialize)]
 #[diesel(table_name = crate::schema::games)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct UpdateGame {
@@ -20,7 +22,7 @@ pub struct UpdateGame {
     pub winner_id: Option<String>,
 }
 
-#[derive(Queryable, Selectable)]
+#[derive(Queryable, Selectable, Serialize, Deserialize)]
 #[diesel(table_name = crate::schema::players)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 #[diesel(primary_key(player_id, game_id))]
@@ -28,12 +30,12 @@ pub struct Player {
     pub player_id: String,
     pub game_id: i32,
     pub is_host: Option<bool>,
-    pub left_game_at: Option<PgTimestamp>,
-    pub created_at: PgTimestamp,
-    pub updated_at: PgTimestamp,
+    pub left_game_at: Option<NaiveDateTime>,
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime,
 }
 
-#[derive(Insertable)]
+#[derive(Insertable, Serialize, Deserialize)]
 #[diesel(table_name = crate::schema::players)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct NewPlayer {
@@ -42,7 +44,7 @@ pub struct NewPlayer {
     pub is_host: Option<bool>,
 }
 
-#[derive(AsChangeset)]
+#[derive(AsChangeset, Serialize, Deserialize)]
 #[diesel(table_name = crate::schema::players)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 #[diesel(primary_key(player_id, game_id))]
@@ -50,10 +52,10 @@ pub struct UpdatePlayer {
     pub player_id: String,
     pub game_id: i32,
     pub is_host: Option<bool>,
-    pub left_game_at: Option<PgTimestamp>,
+    pub left_game_at: Option<NaiveDateTime>,
 }
 
-#[derive(Queryable)]
+#[derive(Queryable, Serialize, Deserialize)]
 #[diesel(table_name = crate::schema::player_scoring)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 #[diesel(primary_key(player_id))]
@@ -67,11 +69,11 @@ pub struct PlayerScoring {
     pub games_lost: i32,
     pub games_top3: i32,
     pub games_bottom3: i32,
-    pub created_at: PgTimestamp,
-    pub updated_at: PgTimestamp,
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime,
 }
 
-#[derive(AsChangeset)]
+#[derive(AsChangeset, Serialize, Deserialize)]
 #[diesel(table_name = crate::schema::player_scoring)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 #[diesel(primary_key(player_id))]
@@ -87,7 +89,7 @@ pub struct UpdatePlayerScoring {
     pub games_bottom3: Option<i32>,
 }
 
-#[derive(Queryable, Selectable)]
+#[derive(Queryable, Selectable, Serialize, Deserialize)]
 #[diesel(table_name = crate::schema::rounds)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Round {
@@ -95,22 +97,22 @@ pub struct Round {
     pub game_id: i32,
     pub round_number: i32,
     pub topic: String,
-    pub start_time: PgTimestamp,
-    pub end_time: PgTimestamp,
+    pub start_time: NaiveDateTime,
+    pub end_time: NaiveDateTime,
 }
 
-#[derive(Insertable)]
+#[derive(Insertable, Serialize, Deserialize)]
 #[diesel(table_name = crate::schema::rounds)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct NewRound {
     pub game_id: i32,
     pub round_number: i32,
     pub topic: String,
-    pub start_time: PgTimestamp,
-    pub end_time: PgTimestamp,
+    pub start_time: NaiveDateTime,
+    pub end_time: NaiveDateTime,
 }
 
-#[derive(AsChangeset)]
+#[derive(AsChangeset, Serialize, Deserialize)]
 #[diesel(table_name = crate::schema::rounds)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct UpdateRound {
@@ -118,11 +120,11 @@ pub struct UpdateRound {
     pub game_id: Option<i32>,
     pub round_number: Option<i32>,
     pub topic: Option<String>,
-    pub start_time: Option<PgTimestamp>,
-    pub end_time: Option<PgTimestamp>,
+    pub start_time: Option<NaiveDateTime>,
+    pub end_time: Option<NaiveDateTime>,
 }
 
-#[derive(Insertable)]
+#[derive(Insertable, Serialize, Deserialize)]
 #[diesel(table_name = crate::schema::player_scoring_round)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct NewPlayerScoringRound {
@@ -131,7 +133,7 @@ pub struct NewPlayerScoringRound {
     pub round_id: i32,
 }
 
-#[derive(AsChangeset)]
+#[derive(AsChangeset, Serialize, Deserialize)]
 #[diesel(table_name = crate::schema::player_scoring_round)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct UpdatePlayerScoringRound {
@@ -148,7 +150,7 @@ pub struct UpdatePlayerScoringRound {
     pub has_stopped_game: Option<bool>,
 }
 
-#[derive(Queryable, Selectable)]
+#[derive(Queryable, Selectable, Serialize, Deserialize)]
 #[diesel(table_name = crate::schema::player_scoring_round)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct PlayerScoringRound {
@@ -163,6 +165,6 @@ pub struct PlayerScoringRound {
     pub second_topic: Option<String>,
     pub third_topic: Option<String>,
     pub has_stopped_game: Option<bool>,
-    pub created_at: PgTimestamp,
-    pub updated_at: PgTimestamp,
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime,
 }
