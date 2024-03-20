@@ -1,4 +1,10 @@
-pub fn calculate_score(topic: String, first_topic: String, second_topic: String, third_topic: String, has_stopped_game: bool) -> i32 {
+pub fn calculate_score(
+    topic: String,
+    first_topic: String,
+    second_topic: String,
+    third_topic: String,
+    has_stopped_game: bool,
+) -> i32 {
     let mut score = 0;
     if topic == first_topic {
         score += 500;

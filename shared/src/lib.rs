@@ -1,5 +1,6 @@
 pub mod error;
 pub mod game_status;
+pub mod request;
 pub mod response;
 pub mod score;
 
